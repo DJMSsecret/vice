@@ -2,7 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.    <title>Catálogo Día de las Madres - Hecho en Bolivia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Catálogo Día de las Madres - Hecho en Bolivia</title>
 
     <meta name="description" content="Catálogo especial del Día de las Madres con productos hechos en Bolivia. Descubre ofertas y contacta directamente por WhatsApp.">
     <meta property="og:title" content="Catálogo Día de las Madres - Hecho en Bolivia">
@@ -110,6 +111,18 @@
             text-shadow: 0 4px 25px rgba(0,0,0,0.35);
             line-height: 0.95;
             margin-bottom: 14px;
+        }
+        .hero-logo {
+            width: 260px;
+            max-width: 80%;
+            height: auto;
+            margin-bottom: 22px;
+            filter: drop-shadow(0 3px 18px rgba(0,0,0,0.35));
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        .hero-logo.animate-logo {
+            transform: scale(1.18);
+            opacity: 1;
         }
         .hero-subtitle {
             color: rgba(255,255,255,0.92);
@@ -330,12 +343,14 @@
         </video>
         <div class="hero-overlay"></div>
         <div class="hero-content reveal active">
-            <img src="Imagenes/logo-vice.png" alt="Logo Hecho en Bolivia" style="width: 120px; margin-bottom: 22px; filter: drop-shadow(0 3px 15px rgba(0,0,0,0.3));">
+            <img class="hero-logo" src="Imagenes/logo-vice.png" alt="Logo Hecho en Bolivia">
             <div class="hero-tag">Hecho en Bolivia</div>
             <h1 class="hero-title">Catálogo Día de las Madres</h1>
+            <p class="hero-subtitle">Por que tu amor es la raíz que sostiene nuestras vidas y la luz que guían nuestro camino.</p>
             <p class="hero-subtitle">Productos seleccionados por MyPEs y artesanos bolivianos para celebrar a mamá con ofertas especiales y contacto directo por WhatsApp.</p>
-            
         </div>
+         
+            
         <div class="scroll-indicator">Desliza hacia abajo ↓</div>
     </section>
 
@@ -343,7 +358,7 @@
         <div class="blob blob-1"></div>
         <div class="page-content reveal">
             <h2 class="title-inst">Mensaje Institucional</h2>
-            <p class="text-block">El <strong>Ministerio de Desarrollo Productivo</strong> rinde homenaje a la madre boliviana. Cada producto en este catálogo es fruto del esfuerzo de nuestras <strong>MyPEs y artesanos</strong>. Regalar lo nuestro es sembrar futuro. ¡Felicidades Mamá!</p>
+            <p class="text-block">Queridas familias bolivianas, en el Día de la Madre el <strong>Ministerio de Desarrollo Productivo, Rural y Agua</strong>, a través del Viceministerio de la Micro, Pequeña Empresa y Artesanía, rinde homenaje a la fuerza incansable de las madres, presentes en cada hogar y emprendimiento. Este catálogo reúne productos que reflejan el alma de nuestra producción nacional, elaborados con dedicación por <strong>MyPEs y artesanos</strong>. Al elegirlos, no solo se celebra a mamá, sino que se apoya el trabajo digno y el orgullo de lo “Hecho en Bolivia”. A todas las madres, nuestro respeto y admiración. La Paz, Bolivia. ¡Felicidades en su día! 💐</p>
             <div style="width: 64px; height: 4px; background: var(--bolivia-amarillo); margin: 28px auto 0;"></div>
         </div>
         <div class="scroll-indicator">Desliza hacia abajo ↓</div>
@@ -645,7 +660,38 @@
         });
     }
     const container = document.querySelector('.container');
-    container.addEventListener('scroll', revealOnScroll);
+    const headerLogo = document.querySelector('.hero-logo');
+    let resetScrollTimer = null;
+
+    function animateHeaderLogo() {
+        if (!headerLogo) return;
+        headerLogo.classList.add('animate-logo');
+        setTimeout(() => headerLogo.classList.remove('animate-logo'), 1200);
+    }
+
+    function scheduleResetScroll() {
+        if (resetScrollTimer) return;
+        resetScrollTimer = setTimeout(() => {
+            animateHeaderLogo();
+            container.scrollTo({ top: 0, behavior: 'smooth' });
+            resetScrollTimer = null;
+        }, 1400);
+    }
+
+    function checkResetScroll() {
+        const atBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 16;
+        if (atBottom) {
+            scheduleResetScroll();
+        } else if (resetScrollTimer) {
+            clearTimeout(resetScrollTimer);
+            resetScrollTimer = null;
+        }
+    }
+
+    container.addEventListener('scroll', () => {
+        revealOnScroll();
+        checkResetScroll();
+    });
     window.addEventListener('load', revealOnScroll);
 
     const imageModal = document.getElementById('image-modal');

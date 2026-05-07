@@ -111,6 +111,18 @@
             line-height: 0.95;
             margin-bottom: 14px;
         }
+        .hero-logo {
+            width: 260px;
+            max-width: 80%;
+            height: auto;
+            margin-bottom: 22px;
+            filter: drop-shadow(0 3px 18px rgba(0,0,0,0.35));
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        .hero-logo.animate-logo {
+            transform: scale(1.18);
+            opacity: 1;
+        }
         .hero-subtitle {
             color: rgba(255,255,255,0.92);
             font-size: 0.95rem;
@@ -330,7 +342,7 @@
         </video>
         <div class="hero-overlay"></div>
         <div class="hero-content reveal active">
-            <img src="Imagenes/logo-vice.png" alt="Logo Hecho en Bolivia" style="width: 120px; margin-bottom: 22px; filter: drop-shadow(0 3px 15px rgba(0,0,0,0.3));">
+            <img class="hero-logo" src="Imagenes/logo-vice.png" alt="Logo Hecho en Bolivia">
             <div class="hero-tag">Hecho en Bolivia</div>
             <h1 class="hero-title">Catálogo Día de las Madres</h1>
             <p class="hero-subtitle">Productos seleccionados por MyPEs y artesanos bolivianos para celebrar a mamá con ofertas especiales y contacto directo por WhatsApp.</p>
@@ -645,7 +657,38 @@
         });
     }
     const container = document.querySelector('.container');
-    container.addEventListener('scroll', revealOnScroll);
+    const headerLogo = document.querySelector('.hero-logo');
+    let resetScrollTimer = null;
+
+    function animateHeaderLogo() {
+        if (!headerLogo) return;
+        headerLogo.classList.add('animate-logo');
+        setTimeout(() => headerLogo.classList.remove('animate-logo'), 1200);
+    }
+
+    function scheduleResetScroll() {
+        if (resetScrollTimer) return;
+        resetScrollTimer = setTimeout(() => {
+            animateHeaderLogo();
+            container.scrollTo({ top: 0, behavior: 'smooth' });
+            resetScrollTimer = null;
+        }, 1400);
+    }
+
+    function checkResetScroll() {
+        const atBottom = container.scrollTop + container.clientHeight >= container.scrollHeight - 16;
+        if (atBottom) {
+            scheduleResetScroll();
+        } else if (resetScrollTimer) {
+            clearTimeout(resetScrollTimer);
+            resetScrollTimer = null;
+        }
+    }
+
+    container.addEventListener('scroll', () => {
+        revealOnScroll();
+        checkResetScroll();
+    });
     window.addEventListener('load', revealOnScroll);
 
     const imageModal = document.getElementById('image-modal');
